@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -16,8 +14,16 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "TB_VOTACAO")
 public class Votacao {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "CDVOTACAO", nullable = false)
     Integer id;
+
     @ManyToOne
+    @JoinColumn(name = "FKPAUTA", referencedColumnName = "CDPAUTA")
     Pauta pauta;
+
+    @ManyToOne
+    @JoinColumn(name = "FKPESSOA", referencedColumnName = "CDPESSOA")
     Pessoa pessoa;
 }
