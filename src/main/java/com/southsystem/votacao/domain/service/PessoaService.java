@@ -14,4 +14,8 @@ public class PessoaService {
     public Pessoa cadastrar(Pessoa pessoa) {
         return pessoaRepository.save(pessoa);
     }
+
+    public boolean jaExisteCadastro(Pessoa pessoa){
+        return pessoaRepository.existsById(pessoa.getId());
+    }
 }

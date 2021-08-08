@@ -5,12 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PessoaRepresentation {
-    Long id;
-    String nmPessoa;
+public class VotacaoRepresentation {
+    Long cdPauta;
+    TipoVoto voto;
     String nuCpfCnpj;
 }

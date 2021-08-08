@@ -6,7 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Builder
 @Data
@@ -14,11 +19,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "TB_PAUTA")
-public class Pauta {
+public class Pauta implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CDPAUTA", nullable = false)
-    Integer id;
+    Long id;
 
     @Column(name = "DSPAUTA", length = 200, nullable = false)
     String descricao;
@@ -26,9 +31,12 @@ public class Pauta {
     @Column(name = "DTINICIO", nullable = false)
     LocalDateTime dtInicio;
 
-    @Column(name = "MINDURACAO", nullable = false)
-    Integer minutosDuracao;
+    @Column(name = "DTFIM", nullable = false)
+    LocalDateTime dtFim;
 
+    @Column(name = "FLATIVA", length = 1)
+    String flagAtiva;
 
-
+    @Transient
+    Long minutosDuracao;
 }

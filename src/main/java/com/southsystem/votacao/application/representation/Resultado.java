@@ -5,12 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
+import java.util.List;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PessoaRepresentation {
-    Long id;
-    String nmPessoa;
-    String nuCpfCnpj;
+public class Resultado {
+    long qtdSim;
+    long qtdNao;
+    List<VotacaoRepresentation> listaResultado;
+
 }
