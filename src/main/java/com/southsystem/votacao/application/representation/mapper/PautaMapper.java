@@ -4,7 +4,6 @@ import com.southsystem.votacao.application.representation.PautaRepresentation;
 import com.southsystem.votacao.domain.DAO.Pauta;
 
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAmount;
 
 public class PautaMapper {
 
@@ -24,10 +23,18 @@ public class PautaMapper {
         return Pauta.builder()
                 .id(pauta.getId())
                 .dtInicio(dateTime)
-                .dtFim(dateTime.plusMinutes(pauta.getMinutosDuracao()))
+                .dtFim(dateTime.plusMinutes(setMinDuracao(pauta)))
                 .minutosDuracao(pauta.getMinutosDuracao())
                 .flagAtiva(pauta.getFlagAtiva())
                 .descricao(pauta.getDescricao())
                 .build();
+    }
+
+    private static Long setMinDuracao(PautaRepresentation pauta) {
+        long minDuracaoDefault = 1L;
+        if (pauta.getMinutosDuracao() == null) {
+            pauta.setMinutosDuracao(minDuracaoDefault);
+        }
+        return pauta.getMinutosDuracao();
     }
 }
