@@ -105,4 +105,45 @@ public class VotacaoControllerTests {
         var sut = controller.cadastrarPessoa(entrada);
         Assertions.assertEquals(1L, sut.getId());
     }
+
+    @Test
+    void consultar_lista_de_pessoa_sucesso(){
+        List<Pessoa> pessoas = new ArrayList<>();
+        for (int i = 0; i <= 5; i++) {
+            Pessoa pessoa = Pessoa.builder()
+                    .nuCpfCnpj("123")
+                    .id((long) i)
+                    .nmPessoa("test")
+                    .build();
+            pessoas.add(pessoa);
+        }
+
+        when(pessoaService.listar())
+                .thenReturn(pessoas);
+
+        Assertions.assertFalse(pessoas.isEmpty());
+        Assertions.assertEquals(6,pessoas.size());
+    }
+
+    @Test
+    void consultar_lista_de_pautas_sucesso(){
+        List<Pauta> pautas = new ArrayList<>();
+        for (int i = 0; i <= 5; i++) {
+            Pauta pauta = Pauta.builder()
+                    .id((long) i)
+                    .minutosDuracao(60L)
+                    .descricao("desc")
+                    .dtFim(LocalDateTime.now().plusDays(1))
+                    .dtInicio(LocalDateTime.now())
+                    .build();
+
+            pautas.add(pauta);
+        }
+
+        when(votacaoService.listarPautas())
+                .thenReturn(pautas);
+
+        Assertions.assertFalse(pautas.isEmpty());
+        Assertions.assertEquals(6,pautas.size());
+    }
 }
