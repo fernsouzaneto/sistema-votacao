@@ -1,5 +1,6 @@
 package com.southsystem.votacao.application.representation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class PautaRepresentation {
     String descricao;
     LocalDateTime dtInicio;
     LocalDateTime dtFim;
+    @JsonIgnore
     Long minutosDuracao;
     String flagAtiva;
 }

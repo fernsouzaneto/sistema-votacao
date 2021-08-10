@@ -42,6 +42,10 @@ public class VotacaoController {
         return resultado;
     }
 
+    @GetMapping("/pauta/listar")
+    public List<PautaRepresentation> listarPautas(){
+        return PautaMapper.toRepresentationList(votacaoService.listarPautas());
+    }
 
     @PostMapping("/pessoa/cadastrar")
     public PessoaRepresentation cadastrarPessoa(@RequestBody PessoaRepresentation pessoa) throws VotacaoException {
@@ -55,6 +59,7 @@ public class VotacaoController {
     public List<PessoaRepresentation> listarPessoas(){
         return PessoaMapper.toRepresentationList(pessoaService.listar());
     }
+
 
     private Resultado getResultado(List<VotacaoRepresentation> listaVotos) {
         return Resultado.builder()

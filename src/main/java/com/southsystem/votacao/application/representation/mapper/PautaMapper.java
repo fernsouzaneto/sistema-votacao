@@ -4,6 +4,8 @@ import com.southsystem.votacao.application.representation.PautaRepresentation;
 import com.southsystem.votacao.domain.DAO.Pauta;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PautaMapper {
 
@@ -28,6 +30,16 @@ public class PautaMapper {
                 .flagAtiva(pauta.getFlagAtiva())
                 .descricao(pauta.getDescricao())
                 .build();
+    }
+
+    public static List<PautaRepresentation> toRepresentationList(List<Pauta> pautas){
+        List<PautaRepresentation> representationList = new ArrayList<>();
+
+        for(Pauta pauta : pautas){
+            representationList.add(toRepresentation(pauta));
+        }
+
+        return representationList;
     }
 
     private static Long setMinDuracao(PautaRepresentation pauta) {
