@@ -11,7 +11,6 @@ import java.util.List;
 public class VotacaoMapper {
 
     public static VotacaoRepresentation toRepresentation(Votacao votacao) {
-        //TODO: verificar se vale a pena por o id gerando no response
         return VotacaoRepresentation.builder()
                 .id(votacao.getId())
                 .cdPauta(votacao.getPauta().getId())

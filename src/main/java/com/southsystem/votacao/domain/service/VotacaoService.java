@@ -41,6 +41,10 @@ public class VotacaoService {
         return votacaoRepository.consultarPorPauta(id);
     }
 
+    public List<Pauta> listarPautas(){
+        return pautaRepository.findAll();
+    }
+
     public Votacao votar(String nuCPFCNPJ, String voto, Long cdPauta) throws Exception {
 
         Optional<Pauta> pauta = pautaRepository.findById(cdPauta);
