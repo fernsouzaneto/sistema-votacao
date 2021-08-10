@@ -8,10 +8,7 @@ import com.southsystem.votacao.domain.exception.VotacaoException;
 import com.southsystem.votacao.domain.service.PessoaService;
 import com.southsystem.votacao.domain.service.VotacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,7 +35,7 @@ public class VotacaoController {
         return votocao;
     }
 
-    @PostMapping("/pauta/resultado/")
+    @GetMapping("/pauta/resultado/")
     public Resultado resultado(@RequestParam Long cdPauta) throws Exception {
         List<VotacaoRepresentation> listaVotos = VotacaoMapper.toRepresentationList(votacaoService.listarResultado(cdPauta));
         Resultado resultado = Resultado.builder()
