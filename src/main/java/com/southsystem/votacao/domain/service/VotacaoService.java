@@ -7,6 +7,7 @@ import com.southsystem.votacao.domain.exception.VotacaoException;
 import com.southsystem.votacao.domain.repository.PautaRepository;
 import com.southsystem.votacao.domain.repository.PessoaRepository;
 import com.southsystem.votacao.domain.repository.VotacaoRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class VotacaoService {
 
@@ -26,29 +28,33 @@ public class VotacaoService {
     @Autowired
     private PessoaRepository pessoaRepository;
 
-    public Pauta inicarNovaPauta(Pauta pauta) {
+    public Pauta criarPauta(Pauta pauta) {
+        log.info("Criando pauta ->", pauta);
         Pauta pautaCrida = pautaRepository.save(pauta);
         pautaCrida.setMinutosDuracao(pauta.getMinutosDuracao());
-
+        log.info("Pauta Criada com sucesso!  ->", pautaCrida);
         return pautaCrida;
     }
 
     public List<Votacao> listarResultado(Long id) {
+        log.info("Listar resultado da pauta ", id);
         return votacaoRepository.consultarPorPauta(id);
     }
 
-    public void votar(String nuCPFCNPJ, String voto, Long cdPauta) throws Exception {
+    public Votacao votar(String nuCPFCNPJ, String voto, Long cdPauta) throws Exception {
 
         Optional<Pauta> pauta = pautaRepository.findById(cdPauta);
         Optional<Pessoa> pessoa = pessoaRepository.findByCPFCNPJ(nuCPFCNPJ);
 
         if (pauta.isPresent() && pessoa.isPresent()) {
-            verificaDadosExistentes(pauta.get(), pessoa.get());
-            verificaPautaDisponivel(pauta.get());
+            verificaCadastroDaPautaEPessoa(pauta.get(), pessoa.get());
+            verificaDisponibilidadeDaPauta(pauta.get());
         } else {
             if (pauta.isEmpty()) {
+                log.error("Pauta {} não encontrada!", cdPauta);
                 throw new VotacaoException("Pauta não encontrada!");
             }
+            log.error("Pessoa do CPF/CNPJ {} não encontrada!",nuCPFCNPJ);
             throw new VotacaoException("Pessoa não encontrada!");
         }
 
@@ -58,22 +64,25 @@ public class VotacaoService {
                 .pessoa(pessoa.get())
                 .build();
 
-        votacaoRepository.save(votacao);
+        return votacaoRepository.save(votacao);
     }
 
-    private void verificaPautaDisponivel(Pauta pauta) throws Exception {
+    private void verificaDisponibilidadeDaPauta(Pauta pauta) throws Exception {
         if ("N".equals(pauta.getFlagAtiva())) {
-            throw new VotacaoException("Sessao finalizada para votos.");
+            log.error("Tempo da sessão da pauta {} expirou", pauta);
+            throw new VotacaoException("Sessao de votação expirada.");
         } else if (LocalDateTime.now().isAfter(pauta.getDtFim())) {
             pauta.setFlagAtiva("N");
+            log.error("Tempo da sessão da pauta {} expirou", pauta);
             pautaRepository.save(pauta);
-            throw new VotacaoException("Sessao finalizada para votos.");
+            throw new VotacaoException("Sessao de votação expirada.");
         }
     }
 
-    private void verificaDadosExistentes(Pauta pauta, Pessoa pessoa) throws Exception {
+    private void verificaCadastroDaPautaEPessoa(Pauta pauta, Pessoa pessoa) throws Exception {
         Optional<Votacao> votacao = votacaoRepository.consultarVotoDuplicado(pessoa.getId(), pauta.getId());
         if (votacao.isPresent()) {
+            log.error("Tentativa de votaçao duplicada para a pauta {}", pauta.getId());
             throw new VotacaoException("Tentativa de votaçao duplicada");
         }
     }

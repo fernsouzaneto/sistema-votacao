@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VotacaoRepresentation {
+    Long id;
     Long cdPauta;
     TipoVoto voto;
     String nuCpfCnpj;

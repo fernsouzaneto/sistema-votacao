@@ -4,7 +4,6 @@ import com.southsystem.votacao.application.representation.*;
 import com.southsystem.votacao.application.representation.mapper.PautaMapper;
 import com.southsystem.votacao.application.representation.mapper.PessoaMapper;
 import com.southsystem.votacao.application.representation.mapper.VotacaoMapper;
-import com.southsystem.votacao.domain.DAO.Votacao;
 import com.southsystem.votacao.domain.exception.VotacaoException;
 import com.southsystem.votacao.domain.service.PessoaService;
 import com.southsystem.votacao.domain.service.VotacaoService;
@@ -29,16 +28,15 @@ public class VotacaoController {
     @PostMapping("/pauta/criar")
     public PautaRepresentation novaPauta(@RequestBody PautaRepresentation pauta) {
         PautaRepresentation response
-                = PautaMapper.toRepresentation(votacaoService.inicarNovaPauta(PautaMapper.fromRepresentation(pauta)));
+                = PautaMapper.toRepresentation(votacaoService.criarPauta(PautaMapper.fromRepresentation(pauta)));
 
         return response;
     }
 
     @PostMapping("/pauta/votar")
-    public ResponseEntity<Object> novaPauta(@RequestParam Long cdPauta, @RequestParam String nuCPFCNPJ, @RequestParam TipoVoto voto) throws Exception {
-        String sucesso = "Voto realizado com sucesso!!";
-        votacaoService.votar(nuCPFCNPJ,voto.name(),cdPauta);
-        return ResponseEntity.ok(sucesso);
+    public VotacaoRepresentation votar(@RequestParam Long cdPauta, @RequestParam String nuCPFCNPJ, @RequestParam TipoVoto voto) throws Exception {
+        VotacaoRepresentation votocao = VotacaoMapper.toRepresentation(votacaoService.votar(nuCPFCNPJ,voto.name(),cdPauta));
+        return votocao;
     }
 
     @PostMapping("/pauta/resultado/")
