@@ -38,12 +38,7 @@ public class VotacaoController {
     @GetMapping("/pauta/resultado/")
     public Resultado resultado(@RequestParam Long cdPauta) throws Exception {
         List<VotacaoRepresentation> listaVotos = VotacaoMapper.toRepresentationList(votacaoService.listarResultado(cdPauta));
-        Resultado resultado = Resultado.builder()
-                .listaResultado(listaVotos)
-                .qtdNao(listaVotos.stream().filter(v -> TipoVoto.NAO.equals(v.getVoto())).count())
-                .qtdSim(listaVotos.stream().filter(v -> TipoVoto.SIM.equals(v.getVoto())).count())
-                .build();
-
+        Resultado resultado = getResultado(listaVotos);
         return resultado;
     }
 
@@ -54,5 +49,18 @@ public class VotacaoController {
                 = PessoaMapper.toRepresentation(pessoaService.cadastrar(PessoaMapper.fromRepresentation(pessoa)));
 
         return response;
+    }
+
+    @GetMapping("/pessoa/listar")
+    public List<PessoaRepresentation> listarPessoas(){
+        return PessoaMapper.toRepresentationList(pessoaService.listar());
+    }
+
+    private Resultado getResultado(List<VotacaoRepresentation> listaVotos) {
+        return Resultado.builder()
+                .listaResultado(listaVotos)
+                .qtdNao(listaVotos.stream().filter(v -> TipoVoto.NAO.equals(v.getVoto())).count())
+                .qtdSim(listaVotos.stream().filter(v -> TipoVoto.SIM.equals(v.getVoto())).count())
+                .build();
     }
 }
