@@ -1,21 +1,18 @@
 package com.southsystem.votacao.application.controller;
 
 import com.southsystem.votacao.application.representation.PautaRepresentation;
-import com.southsystem.votacao.application.representation.Resultado;
+import com.southsystem.votacao.application.representation.PessoaRepresentation;
 import com.southsystem.votacao.application.representation.TipoVoto;
-import com.southsystem.votacao.application.representation.VotacaoRepresentation;
 import com.southsystem.votacao.domain.DAO.Pauta;
 import com.southsystem.votacao.domain.DAO.Pessoa;
 import com.southsystem.votacao.domain.DAO.Votacao;
+import com.southsystem.votacao.domain.exception.VotacaoException;
 import com.southsystem.votacao.domain.service.PessoaService;
 import com.southsystem.votacao.domain.service.VotacaoService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
@@ -39,7 +36,7 @@ public class VotacaoControllerTests {
 
 
     @Test
-    void criar_pauta_com_sucesso_id_retornado(){
+    void criar_pauta_com_sucesso_id_retornado() {
         Pauta pautaMock = Pauta.builder()
                 .id(1L)
                 .descricao("desc")
@@ -65,17 +62,17 @@ public class VotacaoControllerTests {
                 .voto(TipoVoto.SIM.name())
                 .build();
 
-        when(votacaoService.votar("123","SIM",1L))
+        when(votacaoService.votar("123", "SIM", 1L))
                 .thenReturn(votacaoMock);
 
-        var sut = controller.votar(1L,"123",TipoVoto.SIM);
+        var sut = controller.votar(1L, "123", TipoVoto.SIM);
         Assertions.assertEquals(1L, sut.getId());
     }
 
     @Test
     void consultar_resultado_votacao_retorna_lista() throws Exception {
         List<Votacao> votacaoList = new ArrayList<>();
-        for(int i = 0 ; i <=5 ;i++){
+        for (int i = 0; i <= 5; i++) {
             Votacao votacaoMock = Votacao.builder()
                     .pauta(Pauta.builder().id(1L).build())
                     .pessoa(Pessoa.builder().nuCpfCnpj("123").build())
@@ -89,5 +86,23 @@ public class VotacaoControllerTests {
         var sut = controller.resultado(1L);
         Assertions.assertFalse(sut.getListaResultado().isEmpty());
         Assertions.assertEquals(6, sut.getListaResultado().size());
+    }
+
+    @Test
+    void cadastro_da_pessoa_retorna_id_gerado() throws VotacaoException {
+        PessoaRepresentation entrada= PessoaRepresentation.builder()
+                .nmPessoa("test")
+                .nuCpfCnpj("123")
+                .build();
+
+        Pessoa pessoa = Pessoa.builder()
+                .id(1L)
+                .build();
+
+        when(pessoaService.cadastrar(any(Pessoa.class)))
+                .thenReturn(pessoa);
+
+        var sut = controller.cadastrarPessoa(entrada);
+        Assertions.assertEquals(1L, sut.getId());
     }
 }

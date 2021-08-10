@@ -47,8 +47,8 @@ public class VotacaoService {
         Optional<Pessoa> pessoa = pessoaRepository.findByCPFCNPJ(nuCPFCNPJ);
 
         if (pauta.isPresent() && pessoa.isPresent()) {
-            verificaCadastroDaPautaEPessoa(pauta.get(), pessoa.get());
-            verificaDisponibilidadeDaPauta(pauta.get());
+            verificarDuplicidadeDoVoto(pauta.get(), pessoa.get());
+            verificarDisponibilidadeDaPauta(pauta.get());
         } else {
             if (pauta.isEmpty()) {
                 log.error("Pauta {} não encontrada!", cdPauta);
@@ -67,7 +67,7 @@ public class VotacaoService {
         return votacaoRepository.save(votacao);
     }
 
-    private void verificaDisponibilidadeDaPauta(Pauta pauta) throws Exception {
+    private void verificarDisponibilidadeDaPauta(Pauta pauta) throws Exception {
         if ("N".equals(pauta.getFlagAtiva())) {
             log.error("Tempo da sessão da pauta {} expirou", pauta);
             throw new VotacaoException("Sessao de votação expirada.");
@@ -79,7 +79,7 @@ public class VotacaoService {
         }
     }
 
-    private void verificaCadastroDaPautaEPessoa(Pauta pauta, Pessoa pessoa) throws Exception {
+    private void verificarDuplicidadeDoVoto(Pauta pauta, Pessoa pessoa) throws Exception {
         Optional<Votacao> votacao = votacaoRepository.consultarVotoDuplicado(pessoa.getId(), pauta.getId());
         if (votacao.isPresent()) {
             log.error("Tentativa de votaçao duplicada para a pauta {}", pauta.getId());

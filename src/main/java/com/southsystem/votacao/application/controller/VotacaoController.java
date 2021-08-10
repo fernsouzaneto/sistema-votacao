@@ -8,7 +8,6 @@ import com.southsystem.votacao.domain.exception.VotacaoException;
 import com.southsystem.votacao.domain.service.PessoaService;
 import com.southsystem.votacao.domain.service.VotacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +34,7 @@ public class VotacaoController {
 
     @PostMapping("/pauta/votar")
     public VotacaoRepresentation votar(@RequestParam Long cdPauta, @RequestParam String nuCPFCNPJ, @RequestParam TipoVoto voto) throws Exception {
-        VotacaoRepresentation votocao = VotacaoMapper.toRepresentation(votacaoService.votar(nuCPFCNPJ,voto.name(),cdPauta));
+        VotacaoRepresentation votocao = VotacaoMapper.toRepresentation(votacaoService.votar(nuCPFCNPJ, voto.name(), cdPauta));
         return votocao;
     }
 
@@ -44,13 +43,12 @@ public class VotacaoController {
         List<VotacaoRepresentation> listaVotos = VotacaoMapper.toRepresentationList(votacaoService.listarResultado(cdPauta));
         Resultado resultado = Resultado.builder()
                 .listaResultado(listaVotos)
-                .qtdNao(listaVotos.stream().filter( v -> TipoVoto.NAO.equals(v.getVoto())).count())
-                .qtdSim(listaVotos.stream().filter( v -> TipoVoto.SIM.equals(v.getVoto())).count())
+                .qtdNao(listaVotos.stream().filter(v -> TipoVoto.NAO.equals(v.getVoto())).count())
+                .qtdSim(listaVotos.stream().filter(v -> TipoVoto.SIM.equals(v.getVoto())).count())
                 .build();
 
         return resultado;
     }
-
 
 
     @PostMapping("/pessoa/cadastrar")
