@@ -5,6 +5,7 @@ import com.southsystem.votacao.application.representation.mapper.PautaMapper;
 import com.southsystem.votacao.application.representation.mapper.PessoaMapper;
 import com.southsystem.votacao.application.representation.mapper.VotacaoMapper;
 import com.southsystem.votacao.domain.DAO.Votacao;
+import com.southsystem.votacao.domain.exception.VotacaoException;
 import com.southsystem.votacao.domain.service.PessoaService;
 import com.southsystem.votacao.domain.service.VotacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class VotacaoController {
 
 
     @PostMapping("/pessoa/cadastrar")
-    public PessoaRepresentation cadastrarPessoa(@RequestBody PessoaRepresentation pessoa) {
+    public PessoaRepresentation cadastrarPessoa(@RequestBody PessoaRepresentation pessoa) throws VotacaoException {
         PessoaRepresentation response
                 = PessoaMapper.toRepresentation(pessoaService.cadastrar(PessoaMapper.fromRepresentation(pessoa)));
 

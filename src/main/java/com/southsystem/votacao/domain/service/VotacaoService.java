@@ -3,6 +3,7 @@ package com.southsystem.votacao.domain.service;
 import com.southsystem.votacao.domain.DAO.Pauta;
 import com.southsystem.votacao.domain.DAO.Pessoa;
 import com.southsystem.votacao.domain.DAO.Votacao;
+import com.southsystem.votacao.domain.exception.VotacaoException;
 import com.southsystem.votacao.domain.repository.PautaRepository;
 import com.southsystem.votacao.domain.repository.PessoaRepository;
 import com.southsystem.votacao.domain.repository.VotacaoRepository;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +30,7 @@ public class VotacaoService {
         Pauta pautaCrida = pautaRepository.save(pauta);
         pautaCrida.setMinutosDuracao(pauta.getMinutosDuracao());
 
-        return  pautaCrida;
+        return pautaCrida;
     }
 
     public List<Votacao> listarResultado(Long id) {
@@ -42,14 +42,14 @@ public class VotacaoService {
         Optional<Pauta> pauta = pautaRepository.findById(cdPauta);
         Optional<Pessoa> pessoa = pessoaRepository.findByCPFCNPJ(nuCPFCNPJ);
 
-        if(pauta.isPresent() && pessoa.isPresent()){
+        if (pauta.isPresent() && pessoa.isPresent()) {
             verificaDadosExistentes(pauta.get(), pessoa.get());
             verificaPautaDisponivel(pauta.get());
-        }else{
+        } else {
             if (pauta.isEmpty()) {
-                throw new Exception("Pauta não encontrada!");
+                throw new VotacaoException("Pauta não encontrada!");
             }
-            throw new Exception("Pessoa não encontrada!");
+            throw new VotacaoException("Pessoa não encontrada!");
         }
 
         Votacao votacao = Votacao.builder()
@@ -62,20 +62,19 @@ public class VotacaoService {
     }
 
     private void verificaPautaDisponivel(Pauta pauta) throws Exception {
-        if("N".equals(pauta.getFlagAtiva()) ){
-            throw new Exception("Sessao finalizada para votos.");
-        }else if(LocalDateTime.now().isAfter(pauta.getDtFim())){
+        if ("N".equals(pauta.getFlagAtiva())) {
+            throw new VotacaoException("Sessao finalizada para votos.");
+        } else if (LocalDateTime.now().isAfter(pauta.getDtFim())) {
             pauta.setFlagAtiva("N");
             pautaRepository.save(pauta);
-            throw new Exception("Sessao finalizada para votos.");
+            throw new VotacaoException("Sessao finalizada para votos.");
         }
     }
 
     private void verificaDadosExistentes(Pauta pauta, Pessoa pessoa) throws Exception {
         Optional<Votacao> votacao = votacaoRepository.consultarVotoDuplicado(pessoa.getId(), pauta.getId());
         if (votacao.isPresent()) {
-            throw new Exception("Tentativa de votaçao duplicada");
+            throw new VotacaoException("Tentativa de votaçao duplicada");
         }
-
     }
 }
